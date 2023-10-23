@@ -1,10 +1,9 @@
-import { DronePosition, MoveDirection } from '../../types';
+import { DronePosition, MoveDirection, WallsPolyline } from '../../types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { moveMap } from './helpers.ts';
+import { isTrianglePolylineCollision } from '../../components/cave/utils.ts';
 
 const MAX_SPEED = 6;
-const MIN_SPEED = 1
-
+const MIN_SPEED = 1;
 
 interface DroneState {
   dronePosition: DronePosition;
@@ -16,6 +15,7 @@ interface DroneState {
     verticalSpeed: number;
     moveDirection: MoveDirection;
   } | null;
+  collision: boolean;
 }
 
 const initialState: DroneState = {
@@ -28,6 +28,7 @@ const initialState: DroneState = {
   verticalSpeed: 0,
   moveDirection: 'down',
   pauseCache: null,
+  collision: false,
 };
 
 const droneSlice = createSlice({
@@ -43,7 +44,7 @@ const droneSlice = createSlice({
       }
     },
     decreaseHorizontalSpeed: (state) => {
-      if (state.horizontalSpeed > MIN_SPEED) {
+      if (state.horizontalSpeed > MAX_SPEED * -1) {
         state.horizontalSpeed--;
       }
     },
@@ -53,22 +54,62 @@ const droneSlice = createSlice({
       }
     },
     decreaseVerticalSpeed: (state) => {
-      if (state.verticalSpeed > MIN_SPEED) {
+      if (state.verticalSpeed >= MIN_SPEED) {
         state.verticalSpeed--;
       }
     },
     horizontalMove: (state) => {
-      const move = state.moveDirection;
-      const speed = state.verticalSpeed;
+      const speed = state.horizontalSpeed;
 
-      moveMap[move](speed, state.dronePosition);
+      state.dronePosition.startPoint.x += speed;
+      state.dronePosition.endPoint.x += speed;
+      state.dronePosition.apex.x += speed;
     },
     verticalMove: (state) => {
-      const move = 'down';
       const speed = state.verticalSpeed;
 
-      moveMap[move](speed, state.dronePosition);
-    }
+      state.dronePosition.apex.y += speed;
+      state.dronePosition.endPoint.y += speed;
+      state.dronePosition.startPoint.y += speed;
+    },
+    setMoveDirection: (state, action: PayloadAction<MoveDirection>) => {
+      state.moveDirection = action.payload;
+    },
+    startMove: (state) => {
+      const verticalSpeed = state.verticalSpeed;
+      const horizontalSpeed = state.horizontalSpeed;
+
+      state.dronePosition.startPoint.x += horizontalSpeed;
+      state.dronePosition.endPoint.x += horizontalSpeed;
+      state.dronePosition.apex.x += horizontalSpeed;
+
+      state.dronePosition.apex.y += verticalSpeed;
+      state.dronePosition.endPoint.y += verticalSpeed;
+      state.dronePosition.startPoint.y += verticalSpeed;
+    },
+    isCollision: (
+      state,
+      // action: PayloadAction<WallsPolyline>
+      action: PayloadAction<number[][]>,
+    ) => {
+      // const { left, right } = action.payload;
+
+      console.log(action.payload);
+
+      const isColision = isTrianglePolylineCollision(
+        state.dronePosition,
+        action.payload,
+      );
+      // isTrianglePolylineCollision(state.dronePosition, right);
+
+      state.collision = isTrianglePolylineCollision(
+        state.dronePosition,
+        action.payload,
+      );
+      // isTrianglePolylineCollision(state.dronePosition, right);
+
+      console.log(isColision, 'colision');
+    },
   },
 });
 
@@ -78,5 +119,8 @@ export const {
   increaseHorizontalSpeed,
   increaseVerticalSpeed,
   decreaseVerticalSpeed,
+  setMoveDirection,
+  startMove,
+  isCollision,
 } = droneSlice.actions;
 export default droneSlice.reducer;

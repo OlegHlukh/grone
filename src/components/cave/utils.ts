@@ -1,3 +1,5 @@
+import { DronePosition } from '../../types';
+
 export interface PathProps {
   points: number[];
   index: number;
@@ -51,12 +53,14 @@ export const generatePaths = ({
 };
 
 export function isTrianglePolylineCollision(
-  triangle: number[][],
+  triangle: DronePosition,
   polyline: number[][],
 ) {
-  const [x1, y1] = triangle[0];
-  const [x2, y2] = triangle[1];
-  const [x3, y3] = triangle[2];
+  const { x: x1, y: y1 } = triangle.startPoint;
+  const { x: x2, y: y2 } = triangle.apex;
+  const { x: x3, y: y3 } = triangle.endPoint;
+
+  console.log(triangle.apex.x, triangle.apex.y, 'x1');
 
   for (let i = 0; i < polyline?.length - 1; i++) {
     const [x4, y4] = polyline[i];

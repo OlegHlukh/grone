@@ -9,6 +9,13 @@ export interface DronePosition {
   endPoint: Point;
 }
 
+export type Polyline = number[][];
+
+export interface WallsPolyline {
+  left: Polyline;
+  right: Polyline;
+}
+
 export type GameState = 'started' | 'paused' | 'won' | 'lost' | 'ready';
 
 export type MoveDirection = 'left' | 'right' | 'down';
