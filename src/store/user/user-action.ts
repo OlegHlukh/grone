@@ -16,8 +16,6 @@ export const initUser = createAsyncThunk<
       rejectWithValue('Can not init user');
     }
 
-    console.log(user.id);
-
     const token = await api.user.authUser(user.id);
 
     return {

@@ -13,6 +13,7 @@ export default defineConfig({
       types: '/src/types',
       components: '/src/components',
       hooks: '/src/hooks',
+      styles: '/src/styles',
     },
   },
 });

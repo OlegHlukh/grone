@@ -1,37 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface DronePosition {
-  startPoint: Point; // Початкова точка трикутника
-  apex: Point; // Вершина трикутника
-  endPoint: Point;
-}
-
-type GameState = 'started' | 'paused' | 'won' | 'lost' | 'ready';
-
-type MoveDirection = 'left' | 'right' | 'down';
-
-const MAX_SPEED = 6;
-const MIN_SPPED = 1;
+import { ComplexityLevel, GameState } from 'types';
 
 interface GameSliceState {
   state: GameState;
   score: number;
-  pauseCache: {
-    horizontalSpeed: number;
-    verticalSpeed: number;
-    moveDirection: MoveDirection;
-  } | null;
+  complexity: ComplexityLevel;
+  isLoading: boolean;
 }
 
 const initialState: GameSliceState = {
-  state: 'ready',
+  state: GameState.None,
   score: 0,
-  pauseCache: null,
+  complexity: ComplexityLevel.VeryEasy,
+  isLoading: false,
 };
 
 const gameSlice = createSlice({
@@ -41,8 +22,31 @@ const gameSlice = createSlice({
     updateState: (state, action: PayloadAction<GameState>) => {
       state.state = action.payload;
     },
+    setComplexityLevel: (state, action: PayloadAction<ComplexityLevel>) => {
+      state.complexity = action.payload;
+    },
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+    updateScore: (state, action: PayloadAction<number>) => {
+      state.score += action.payload;
+    },
+    startGame: (state) => {
+      state.isLoading = false;
+      state.state = GameState.Playing;
+    },
+    resetGameState: () => {
+      return initialState;
+    },
   },
 });
 
 export default gameSlice.reducer;
-export const { updateState } = gameSlice.actions;
+export const {
+  startGame,
+  updateScore,
+  updateState,
+  setComplexityLevel,
+  setIsLoading,
+  resetGameState,
+} = gameSlice.actions;

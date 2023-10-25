@@ -7,7 +7,7 @@ export interface PathProps {
   multiplier: number;
   centerOfCanvas: number;
   wallHeight: number;
-  canvasWidth: number;
+  caveWidth: number;
 }
 
 export const generatePaths = ({
@@ -17,7 +17,7 @@ export const generatePaths = ({
   multiplier,
   centerOfCanvas,
   wallHeight,
-  canvasWidth,
+  caveWidth,
 }: PathProps) => {
   const [leftPoint, rightPoint] = points;
 
@@ -32,23 +32,14 @@ export const generatePaths = ({
   const y = index * wallHeight;
   const nextY = (index + 1) * wallHeight;
 
-  if (index === 1) {
-    console.log(canvasWidth - rightX, 'rightX');
-  }
-
-  const leftPolyline = [leftX, y];
-  const rightPolyline = [canvasWidth - rightX, y];
-
   const leftPath = `M0 ${y} L${leftX} ${y} L${nextLeftX} ${nextY} L0 ${nextY} Z`;
-  const rightPath = `M${canvasWidth} ${y} L${canvasWidth - rightX} ${y} L${
-    canvasWidth - nextRightX
-  } ${nextY} L${canvasWidth} ${nextY} Z`;
+  const rightPath = `M${caveWidth} ${y} L${caveWidth - rightX} ${y} L${
+    caveWidth - nextRightX
+  } ${nextY} L${caveWidth} ${nextY} Z`;
 
   return {
     leftPath,
     rightPath,
-    leftPolyline,
-    rightPolyline,
   };
 };
 
@@ -59,8 +50,6 @@ export function isTrianglePolylineCollision(
   const { x: x1, y: y1 } = triangle.startPoint;
   const { x: x2, y: y2 } = triangle.apex;
   const { x: x3, y: y3 } = triangle.endPoint;
-
-  console.log(triangle.apex.x, triangle.apex.y, 'x1');
 
   for (let i = 0; i < polyline?.length - 1; i++) {
     const [x4, y4] = polyline[i];

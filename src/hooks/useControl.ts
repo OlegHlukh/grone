@@ -1,10 +1,9 @@
-import { useAppDispatch, useAppSelector } from './redux.ts';
+import { useAppDispatch } from './redux.ts';
 import {
   increaseVerticalSpeed,
   decreaseVerticalSpeed,
   increaseHorizontalSpeed,
   decreaseHorizontalSpeed,
-  setMoveDirection,
 } from 'store/drone';
 import { useEffect } from 'react';
 import { AnyAction, Dispatch } from '@reduxjs/toolkit';
@@ -14,11 +13,9 @@ type KeyMapHandler = (dispatch: Dispatch<AnyAction>) => void;
 const keyHandlerMap: Record<string, KeyMapHandler> = {
   ArrowRight: (dispatch) => {
     dispatch(increaseHorizontalSpeed());
-    dispatch(setMoveDirection('right'));
   },
   ArrowLeft: (dispatch) => {
     dispatch(decreaseHorizontalSpeed());
-    dispatch(setMoveDirection('left'));
   },
   ArrowUp: (dispatch) => {
     dispatch(decreaseVerticalSpeed());
@@ -30,7 +27,6 @@ const keyHandlerMap: Record<string, KeyMapHandler> = {
 
 export const useControls = () => {
   const dispatch = useAppDispatch();
-  const {} = useAppSelector((state) => state.drone);
 
   useEffect(() => {
     const handleKeyPres = (e: KeyboardEvent) => {

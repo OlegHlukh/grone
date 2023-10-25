@@ -1,79 +1,30 @@
-import { initUser } from 'store/user';
-import { addCavePoints, startLoading, finishLoading } from 'store/cave';
-import { UserInitBody } from './api';
-import { useAppDispatch, useAppSelector } from './hooks';
-import { useEffect, useRef } from 'react';
-
-import WebSocket from 'isomorphic-ws';
-import Cave from './components/cave/cave.tsx';
-import Drone from './components/drone.tsx';
-
-const SERVER_URL = 'wss://cave-drone-server.shtoa.xyz/cave';
+import { Boards } from './components/boards.tsx';
+import styled from 'styled-components';
+import { useGameInit } from './hooks/useGameInit.ts';
+import { useAppSelector } from './hooks';
+import { GameState } from './types';
+import { Game } from './components/game.tsx';
 
 function App() {
-  const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.user);
+  useGameInit();
 
-  const isLoadEnought = useAppSelector((state) => state.cave.isLoadEnough);
-
-  const socketRef = useRef<any | null>(null);
-
-  const loadedRef = useRef<number[][]>([]);
-
-  const handleInitProduct = async () => {
-    const body: UserInitBody = {
-      name: 'some',
-      complexity: 0,
-    };
-
-    dispatch(initUser(body));
-  };
-
-  useEffect(() => {
-    if (!user.id && !user.token) {
-      return;
-    }
-
-    socketRef.current = new WebSocket(SERVER_URL);
-
-    socketRef.current.onopen = () => {
-      console.log('connect');
-
-      dispatch(startLoading);
-
-      const authString = `player:${user.id}-${user.token}`;
-
-      socketRef.current.send(authString);
-    };
-
-    socketRef.current.onmessage = (message: { data: string }) => {
-      console.log(message);
-
-      const parsedPoints = parseCavePoints(message.data);
-
-      loadedRef.current.push(parsedPoints);
-
-      console.log(loadedRef.current);
-    };
-
-    socketRef.current.onclose = () => {
-      console.log('close');
-      dispatch(finishLoading);
-    };
-  }, [user.token, user.id]);
-
-  useEffect(() => {}, []);
+  const { isLoading, state } = useAppSelector((state) => state.game);
 
   return (
-    <>
-      {/*<button onClick={handleInitProduct}>fdsamo</button>*/}
-      <Cave />
-    </>
+    <Root>
+      {state === GameState.Playing ? (
+        <Game isLoading={isLoading} />
+      ) : (
+        <Boards />
+      )}
+    </Root>
   );
 }
 
 export default App;
 
-const parseCavePoints = (data: string) => {
-  return data.split(',').map((el) => parseInt(el));
-};
+const Root = styled.div`
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+`;

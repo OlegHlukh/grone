@@ -1,21 +1,13 @@
-import { FC, memo, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { initDronePosition } from 'store/drone';
+import { FC } from 'react';
 import { DronePosition } from 'types';
 
-const caveWidth = 1000; // Ширина печери
-const droneSize = 30;
+const droneSize = 15;
 
-const Drone: FC = () => {
-  const dispatch = useAppDispatch();
-  const dronePosition = useAppSelector((state) => state.drone.dronePosition);
+interface DroneProps {
+  dronePosition: DronePosition;
+}
 
-  useEffect(() => {
-    const initDrone = getDroneInitPosition(caveWidth, droneSize);
-
-    dispatch(initDronePosition(initDrone));
-  }, []);
-
+const Drone: FC<DroneProps> = ({ dronePosition }) => {
   return (
     <polygon
       style={{
@@ -27,17 +19,4 @@ const Drone: FC = () => {
   );
 };
 
-export default memo(Drone);
-
-const getDroneInitPosition = (
-  caveWidth: number,
-  droneSize: number,
-): DronePosition => {
-  const centerOfCave = Math.round(caveWidth / 2);
-
-  return {
-    startPoint: { x: centerOfCave, y: 0 },
-    endPoint: { x: centerOfCave + droneSize, y: 0 },
-    apex: { x: centerOfCave + droneSize / 2, y: droneSize },
-  };
-};
+export default Drone;

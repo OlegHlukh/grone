@@ -16,6 +16,4 @@ export interface WallsPolyline {
   right: Polyline;
 }
 
-export type GameState = 'started' | 'paused' | 'won' | 'lost' | 'ready';
-
 export type MoveDirection = 'left' | 'right' | 'down';

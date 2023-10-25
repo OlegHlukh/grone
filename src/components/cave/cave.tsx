@@ -1,61 +1,49 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { generatePaths, PathProps } from './utils.ts';
 import Drone from '../drone.tsx';
-import { useAppDispatch, useAppSelector, useControls } from '../../hooks';
-import { mock } from './mock.ts';
-import throttle from 'lodash.throttle';
-import { isCollision, startMove } from 'store/drone';
-
-interface CaveProps {
-  wallsPoints?: number[][];
-}
+import { useAppDispatch, useAppSelector } from 'hooks';
+import styled from 'styled-components';
+import { updateWallIndex } from 'store/cave';
+import { useGame } from 'hooks/useGame.ts';
+import { initDronePosition } from 'store/drone';
+import { getDroneInitPosition } from 'store/drone/helpers.ts';
 
 const SERVER_CANVAS_WIDTH = 500;
+const droneSize = 20;
 
-const Cave: FC<CaveProps> = ({ wallsPoints = mock }) => {
-  const canvasWidth = 1000; // Ширина канвасу
-  const wallHeight = 10; // Висота стін
+const Cave: FC = () => {
   const wallColor = 'gray'; // Колір стін
 
-  const droneYPosition = useAppSelector(
-    (state) => state.drone.dronePosition.startPoint.y,
-  );
+  useGame();
 
+  const dronePosition = useAppSelector((state) => state.drone.dronePosition);
+  const { cave, caveWidth, wallHeight } = useAppSelector((state) => state.cave);
   const dispatch = useAppDispatch();
 
-  const { cave } = useAppSelector((state) => state.drone);
-
-  useControls();
-
-  const multiplier = canvasWidth / SERVER_CANVAS_WIDTH;
+  const droneYPosition = dronePosition.startPoint.y;
+  const wallIndex = Math.round(droneYPosition / wallHeight);
 
   useEffect(() => {
-    let requestId: number | null;
+    const init = getDroneInitPosition(caveWidth, droneSize);
 
-    const updateCavePosition = () => {
-      dispatch(startMove());
-      requestId = requestAnimationFrame(updateCavePosition);
-    };
-
-    const throttledUpdate = throttle(updateCavePosition, 16);
-    throttledUpdate();
-
-    return () => {
-      cancelAnimationFrame(requestId as number); // Зупинка скролінгу при розмонтуванні компонента
-    };
+    dispatch(initDronePosition(init));
   }, []);
 
-  const wallIndex = Math.floor(droneYPosition / wallHeight) ?? 0;
+  useEffect(() => {
+    if (wallIndex === 0) {
+      return;
+    }
 
-  const polylineRef = useRef<{ left: number[][]; right: number[][] }>({
-    left: [],
-    right: [],
-  });
+    dispatch(updateWallIndex(wallIndex));
+  }, [wallIndex]);
+
+  const multiplier = caveWidth / SERVER_CANVAS_WIDTH;
 
   const walls = useMemo(
     () =>
-      wallsPoints.map((points, index, wallsPoints) => {
-        const centerOfCanvas = Math.round(canvasWidth / 2);
+      cave.map((points, index, wallsPoints) => {
+        const centerOfCanvas = Math.round(caveWidth / 2);
+
         const nextPoints = wallsPoints[index + 1] ?? [];
 
         if (!nextPoints.length) {
@@ -67,16 +55,12 @@ const Cave: FC<CaveProps> = ({ wallsPoints = mock }) => {
           index,
           nextPoints,
           multiplier,
-          canvasWidth,
+          caveWidth,
           centerOfCanvas,
           wallHeight,
         };
 
-        const { leftPath, rightPath, rightPolyline, leftPolyline } =
-          generatePaths(generatePathProps);
-
-        polylineRef.current.left.push(leftPolyline);
-        polylineRef.current.right.push(rightPolyline);
+        const { leftPath, rightPath } = generatePaths(generatePathProps);
 
         return (
           <g key={index}>
@@ -85,31 +69,28 @@ const Cave: FC<CaveProps> = ({ wallsPoints = mock }) => {
           </g>
         );
       }),
-    [wallsPoints.length],
+    [cave.length, caveWidth],
   );
 
-  useEffect(() => {
-    console.log(polylineRef.current);
-
-    dispatch(
-      isCollision(polylineRef.current.left.slice(wallIndex, wallIndex + 2)),
-    );
-  }, [wallIndex]);
-
   return (
-    <div style={{ height: '100vh', overflow: 'hidden' }}>
+    <CaveWrapper>
       <svg
-        width={canvasWidth}
-        height={wallsPoints.length * wallHeight}
+        width={caveWidth}
+        height={cave.length * wallHeight}
         style={{
           transform: `translateY(${-droneYPosition}px)`,
         }}
       >
         {walls}
-        <Drone />
+        <Drone dronePosition={dronePosition} />
       </svg>
-    </div>
+    </CaveWrapper>
   );
 };
+
+const CaveWrapper = styled.div`
+  overflow: hidden;
+  height: 100vh;
+`;
 
 export default Cave;

@@ -1,10 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { initUser } from './user-action.ts';
-import { User } from 'types';
-interface UserState {
+import { BaseState, User } from 'types';
+interface UserState extends BaseState {
   user: User;
-  loading: boolean;
-  error: string | null;
 }
 
 const initialState: UserState = {
