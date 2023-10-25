@@ -1,14 +1,14 @@
 import { FC, useMemo, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { NewGameModal } from './new-game-modal.tsx';
 import styled from 'styled-components';
 import { Button } from './ui/button.tsx';
 import { State } from './game-state.tsx';
-import { resetGameState } from '../store/game';
-import { GameState } from '../types';
-import { resetDroneState } from '../store/drone';
-import { resetCaveState } from '../store/cave';
-import { boardSelector } from '../store/board-slice.ts';
+import { resetGameState } from 'store/game';
+import { GameState } from 'types';
+import { resetDroneState } from 'store/drone';
+import { resetCaveState } from 'store/cave';
+import { boardSelector } from 'store/board-slice.ts';
 
 export const Boards: FC = () => {
   const [isOpenForm, setForm] = useState(false);
@@ -45,10 +45,9 @@ export const Boards: FC = () => {
       <h4>Leader board</h4>
       {board.length ? (
         <>
-          {board.map((record, index) => (
+          {board.map((record) => (
             <Record key={record.score}>
-              {index}. <span>{record.userName}:</span>{' '}
-              <strong>{record.score}</strong>
+              <span>{record.userName}:</span> <strong>{record.score}</strong>
             </Record>
           ))}
         </>

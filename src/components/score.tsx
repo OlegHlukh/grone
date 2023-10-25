@@ -1,8 +1,8 @@
 import { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { scoreSelector } from '../store/selectors.ts';
-import { updateScore } from '../store/game';
+import { scoreSelector } from 'store/selectors.ts';
+import { updateScore } from 'store/game';
 
 export const Score: FC = () => {
   const score = useAppSelector(scoreSelector);

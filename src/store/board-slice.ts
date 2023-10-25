@@ -26,5 +26,7 @@ export const { addToBoard } = boardSlice.actions;
 const board = (state: RootState) => state.board.board;
 
 export const boardSelector = createSelector([board], (board) => {
-  return board.sort((a, b) => a.score - b.score).slice(0, 5);
+  const boardCopy = [...board];
+
+  return boardCopy?.sort((a, b) => b.score - a.score).slice(0, 5);
 });

@@ -1,4 +1,4 @@
-import { GameState } from '../types';
+import { GameState } from 'types';
 import { FC } from 'react';
 import styled from 'styled-components';
 
@@ -7,6 +7,7 @@ interface StateProps {
   score: number;
 }
 
+// todo refactor
 export const State: FC<StateProps> = ({ gameState, score }) => {
   if (gameState === GameState.Lost) {
     return (

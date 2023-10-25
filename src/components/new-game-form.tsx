@@ -1,13 +1,13 @@
 import { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { ComplexityLevel, GameState } from '../types';
+import { ComplexityLevel, GameState } from 'types';
 import Input from './ui/input.tsx';
-import { addUserName, initUser } from '../store/user';
-import { UserInitBody } from '../api';
-import { useAppDispatch } from '../hooks';
+import { addUserName, initUser } from 'store/user';
+import { UserInitBody } from 'api';
+import { useAppDispatch } from 'hooks';
 import { Button } from './ui/button.tsx';
-import { setComplexityLevel, setIsLoading, updateState } from '../store/game';
-import { setWallHeight } from '../store/cave';
+import { setComplexityLevel, setIsLoading, updateState } from 'store/game';
+import { setWallHeight } from 'store/cave';
 
 const complexityOption = [
   { value: ComplexityLevel.VeryEasy, label: 'Very easy' },
@@ -23,6 +23,7 @@ const complexityOption = [
   { value: ComplexityLevel.Legendary, label: 'God of War' },
 ];
 
+//todo refactor
 export const NewGameForm: FC = () => {
   const dispatch = useAppDispatch();
 
@@ -48,8 +49,6 @@ export const NewGameForm: FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log(name, complexity);
 
     if (name.trim().length === 0) {
       setNameError('Name is required');

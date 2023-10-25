@@ -1,10 +1,9 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import Cave from './cave/cave.tsx';
-import { useControls } from '../hooks';
+import { useControls, useWindowSize } from 'hooks';
 import { Info } from './ui/info.tsx';
 import { Loader } from './ui/loader.tsx';
-import { useWindowSize } from '../hooks/useWindowSize.ts';
 
 interface GameProps {
   isLoading: boolean;

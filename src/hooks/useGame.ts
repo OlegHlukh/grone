@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from './redux.ts';
-import { isCollisionSelector, startMove } from '../store/drone';
+import { isCollisionSelector, startMove } from 'store/drone';
 import { useEffect } from 'react';
-import { updateState } from '../store/game';
-import { GameState } from '../types';
+import { updateState } from 'store/game';
+import { GameState } from 'types';
 import throttle from 'lodash.throttle';
-import { addToBoard } from '../store/board-slice.ts';
+import { addToBoard } from 'store/board-slice.ts';
 
 export const useGame = () => {
   const collision = useAppSelector(isCollisionSelector);

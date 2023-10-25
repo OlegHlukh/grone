@@ -76,7 +76,6 @@ const caveSlice = createSlice({
 });
 
 export const {
-  startLoading,
   finishLoading,
   addCavePoints,
   updateWallIndex,
@@ -99,8 +98,6 @@ const generatePolyline = ({
   canvasWidth,
   multiplayer,
 }: GeneratePolylineProps) => {
-  console.log(points, y);
-
   const [leftPoint, rightPoint] = points;
 
   const centerOfCanvas = Math.round(canvasWidth / 2);

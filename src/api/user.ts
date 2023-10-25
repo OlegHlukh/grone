@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { INIT_URL } from './config.ts';
+import { INIT_URL, BASE_URL } from './config.ts';
 import type { UserInitBody } from './types.ts';
-import { BASE_URL } from '../services/config.ts';
 
 const TOKEN_CHUNK_SIZE = 4;
 const START_TOKEN_CHUNK = 1;
@@ -22,8 +21,6 @@ const user = {
         },
       },
     );
-
-    console.log(response);
 
     if (response.status !== 200) {
       throw new Error('Failed in user init');

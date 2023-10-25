@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useAppSelector } from '../hooks';
+import { useAppSelector } from 'hooks';
 import styled from 'styled-components';
 
 export const Speed: FC = () => {
