@@ -16,7 +16,7 @@ const initialState: DroneState = {
     endPoint: { x: 0, y: 0 },
   },
   horizontalSpeed: 0,
-  verticalSpeed: 0,
+  verticalSpeed: 1,
 };
 
 const droneSlice = createSlice({

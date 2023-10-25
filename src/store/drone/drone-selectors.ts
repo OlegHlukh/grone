@@ -1,7 +1,7 @@
 import { RootState } from '../store.ts';
 import { getPolyline, getWallIndex } from '../cave';
 import { createSelector } from '@reduxjs/toolkit';
-import { isTrianglePolylineCollision } from '../../components/cave/utils.ts';
+import { isTrianglePolylineCollision } from 'components/cave/utils.ts';
 const getDronePosition = (state: RootState) => state.drone.dronePosition;
 
 export const isCollisionSelector = createSelector(
